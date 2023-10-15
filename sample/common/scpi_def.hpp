@@ -1,7 +1,14 @@
-#ifndef SCPI_DEF_HPP
-#define SCPI_DEF_HPP
+#pragma once
+
 #include <scpi/scpi.hpp>
 
-extern std::list<scpi::Commands> scpi_command_list;
+namespace scpi_def
+{
+    extern std::list<scpi::Commands> scpi_command_list;
 
-#endif /** SCPI_DEF_HPP **/
+    class ScpiDef : public scpi::Parser
+    {
+    public:
+        int SCPI_Error(int16_t error);
+    };
+}
