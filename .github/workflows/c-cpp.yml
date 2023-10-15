@@ -17,6 +17,6 @@ jobs:
     - name: Build
       run: cmake --build ./build
     - name: Install
-      run: cmake --install ./build
+      run: sudo cmake --install ./build
     - name: Run
       run: scpi_cli
