@@ -5,8 +5,14 @@ project(${PROJECT_NAME} VERSION 1.0)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SCPI REQUIRED "Scpi")
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC ${SCPI_INCLUDE_DIRS})
+add_executable(${PROJECT_NAME}
+    main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/scpi_def.cpp
+)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${SCPI_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SCPI_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
