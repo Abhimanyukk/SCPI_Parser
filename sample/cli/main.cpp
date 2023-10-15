@@ -23,6 +23,11 @@ scpi::Interface interface(
 
 int main()
 {
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
+    std::cout << "|            SCPI CLI TEST             |" << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
     scpi::Parser parser(
         scpi_def::scpi_command_list,
         interface,
@@ -32,7 +37,7 @@ int main()
         "SERIAL NUMBER",
         "VERSION");
 
-    // parser.
+    parser.Input("   *IDN?; *CLS; *SRE 32\r\n");
 
     return 0;
 }

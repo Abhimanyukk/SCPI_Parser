@@ -5,6 +5,7 @@
 #include "commands.hpp"
 #include "interface.hpp"
 #include "units.hpp"
+#include "message.hpp"
 
 namespace scpi
 {
@@ -20,15 +21,18 @@ namespace scpi
         Parser(std::list<Commands> cmds,
                scpi::Interface _interface,
                std::list<unit::Units> _unit_def,
-               std::string idn1,
-               std::string idn2,
-               std::string idn3,
-               std::string idn4) : commands(cmds),
-                                   interface(_interface),
-                                   unit_def(_unit_def),
-                                   idn_list({idn1, idn2, idn3, idn4}) {}
+               const std::string &idn1,
+               const std::string &idn2,
+               const std::string &idn3,
+               const std::string &idn4) : commands(cmds),
+                                          interface(_interface),
+                                          unit_def(_unit_def),
+                                          idn_list({idn1, idn2, idn3, idn4})
+        {
+            std::cout << idn_list[2] << std::endl;
+        }
 
-        bool Input(std::string cmd);
+        bool Input(const std::string &cmd);
 
         ~Parser();
     };
