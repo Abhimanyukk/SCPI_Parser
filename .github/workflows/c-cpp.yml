@@ -19,6 +19,6 @@ jobs:
     - name: Install
       run: sudo cmake --install ./build
     - name: Library Cache Update
-      run: ldconfig
+      run: sudo ldconfig
     - name: Run
       run: scpi_cli
