@@ -35,3 +35,4 @@ build/
 Dockerfile
 docker-compose.yml
 build.sh
+*.pc
