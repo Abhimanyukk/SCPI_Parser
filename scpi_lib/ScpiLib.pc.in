@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}/bin
+includedir=@CMAKE_CURRENT_SOURCE_DIR@/inc
+libdir=${prefix}/lib
+
+Name: @SCPI_LIB@
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -l@SCPI_LIB@
