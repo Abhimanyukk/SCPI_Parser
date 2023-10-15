@@ -1,9 +1,13 @@
 #include <iostream>
-#include <scpi/parser.hpp>
+#include <list>
+#include <string>
+
+#include <scpi/scpi.hpp>
+#include "scpi_def.hpp"
 
 int main()
 {
-    scpi::Parser parser;
+    scpi::Parser parser(scpi_command_list);
 
     return 0;
 }

@@ -2,13 +2,18 @@
 #define PARSER_HPP
 
 #include <iostream>
+#include <list>
+#include "commands.hpp"
 
 namespace scpi
 {
     class Parser
     {
+    private:
+        std::list<Commands> commands;
+
     public:
-        Parser();
+        Parser(std::list<Commands> cmds);
         ~Parser();
     };
 }

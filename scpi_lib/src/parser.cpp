@@ -1,7 +1,8 @@
 #include "scpi/parser.hpp"
 
-scpi::Parser::Parser()
+scpi::Parser::Parser(std::list<Commands> cmds)
 {
+    this->commands = cmds;
     std::cout << "Parser" << std::endl;
 }
 
