@@ -24,7 +24,7 @@ bool scpi::msg::Message::RemoveLeadingSpace(std::string &message)
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        std::cerr << "Exception [RemoveLeadingSpace]: " << e.what() << std::endl;
         return false;
     }
 }
@@ -35,38 +35,83 @@ void scpi::msg::Message::RemoveTerminations(std::string &message)
     message.erase(std::remove(message.begin(), message.end(), '\n'), message.end());
 }
 
-void scpi::msg::Message::Split(char delimiter)
+std::vector<std::string> scpi::msg::Message::Split(std::string inputString, char delimiter)
 {
     size_t start = 0, end = 0;
+    std::vector<std::string> stringList;
 
-    while ((end = this->inputMsg.find(delimiter, start)) != std::string::npos)
+    while ((end = inputString.find(delimiter, start)) != std::string::npos)
     {
-        this->inputMessageList.push_back(this->inputMsg.substr(start, end - start));
+        stringList.push_back(inputString.substr(start, end - start));
         start = end + 1;
     }
 
-    this->inputMessageList.push_back(this->inputMsg.substr(start));
+    stringList.push_back(inputString.substr(start));
+
+    return stringList;
 }
 
-bool scpi::msg::Message::ProcessMessage()
+bool scpi::msg::Message::ProcessRawMessage(std::vector<Pattern> &patternList)
 {
     try
     {
-        this->Split(';');
+        this->rawMessageList = this->Split(this->inputMsg, ';');
 
-        int i = 0;
-        for (std::string &message : this->inputMessageList)
+        for (std::string &message : this->rawMessageList)
         {
             this->RemoveLeadingSpace(message);
             this->RemoveTerminations(message);
-            std::cout << "Message: " << message << std::endl;
+            patternList.push_back(Pattern(message));
+            // Pattern singleMessage = Pattern(message);
+            // this->FindCommandHeader()
         }
 
         return true;
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        std::cerr << "Exception [ProcessRawMessage]: " << e.what() << std::endl;
         return false;
     }
+}
+
+bool scpi::msg::Message::ProcessIndividualMessage(scpi::msg::Pattern individualMessage, const std::vector<scpi::Commands> &commandList)
+{
+    for (scpi::Commands command : commandList)
+    {
+        std::function<result_t(std::shared_ptr<Parser>)> cb;
+        if (command.CheckSyntax(individualMessage.GetHeader(), cb))
+        {
+            std::cout << "YYYYYYYYYY Got a match" << std::endl;
+            break;
+        }
+        else{
+            std::cout << "XXXXXX Not a match" << std::endl;
+        }
+    }
+    return false;
+}
+
+scpi::msg::Pattern::Pattern(std::string rawMessage)
+{
+    size_t spacePosition = rawMessage.find(' ');
+    if (spacePosition != std::string::npos)
+    {
+        this->header = rawMessage.substr(0U, spacePosition);
+        this->parameters = rawMessage.substr(spacePosition + 1);
+    }
+    else
+    {
+        this->header = rawMessage;
+        this->parameters = "";
+    }
+    this->type = rawMessage.back() == '?' ? QUERY : COMMAND;
+
+    std::cout << "Command header: " << this->header << std::endl;
+    // std::cout << "Parameters: " << this->parameters << std::endl;
+}
+
+std::string scpi::msg::Pattern::GetHeader()
+{
+    return this->header;
 }

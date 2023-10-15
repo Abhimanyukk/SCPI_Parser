@@ -13,12 +13,22 @@ bool scpi::Parser::Input(const std::string &cmd)
     {
         return false;
     }
-    message.ProcessMessage();
 
-    // while (true)
+    std::vector<scpi::msg::Pattern> patternList;
+    if (!message.ProcessRawMessage(patternList))
+    {
+        // Error Push
+        return false;
+    }
+
+    for (scpi::msg::Pattern pattern : patternList)
+    {
+        message.ProcessIndividualMessage(pattern, this->commands);
+    }
+    // if (!message.FindCommandHeader(this->commands))
     // {
-
+    //     // Error Push
+    //     return false;
     // }
-
     return true;
 }

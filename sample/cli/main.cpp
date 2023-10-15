@@ -37,7 +37,8 @@ int main()
         "SERIAL NUMBER",
         "VERSION");
 
-    parser.Input("   *IDN?; *CLS; *SRE 32\r\n");
+    // parser.Input("*idn?");
+    parser.Input("syst:pressure?");
 
     return 0;
 }

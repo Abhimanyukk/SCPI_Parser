@@ -6,7 +6,7 @@ static scpi::result_t cbFunction(std::shared_ptr<scpi::Parser> parser)
     return scpi::SCPI_RES_OK;
 }
 
-std::list<scpi::Commands> scpi_def::scpi_command_list{
-    {"SCPI", &cbFunction},
-    {"SCPI:SCPI", &cbFunction},
+std::vector<scpi::Commands> scpi_def::scpi_command_list{
+    {"*IDN?", &cbFunction},
+    {"SYSTem#[:PRESsure]?", &cbFunction},
 };

@@ -4,7 +4,7 @@
 
 namespace scpi_def
 {
-    extern std::list<scpi::Commands> scpi_command_list;
+    extern std::vector<scpi::Commands> scpi_command_list;
 
     class ScpiDef : public scpi::Parser
     {

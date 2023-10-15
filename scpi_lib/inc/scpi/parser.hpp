@@ -12,13 +12,13 @@ namespace scpi
     class Parser
     {
     private:
-        std::list<Commands> commands;
+        std::vector<Commands> commands;
         Interface interface;
         std::list<unit::Units> unit_def;
         std::vector<std::string> idn_list;
 
     public:
-        Parser(std::list<Commands> cmds,
+        Parser(std::vector<Commands> cmds,
                scpi::Interface _interface,
                std::list<unit::Units> _unit_def,
                const std::string &idn1,
