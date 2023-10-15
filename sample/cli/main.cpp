@@ -23,7 +23,16 @@ scpi::Interface interface(
 
 int main()
 {
-    scpi::Parser parser(scpi_def::scpi_command_list, interface, scpi::unit::unit_def);
+    scpi::Parser parser(
+        scpi_def::scpi_command_list,
+        interface,
+        scpi::unit::unit_def,
+        "MANUFACTURER",
+        "MODEL",
+        "SERIAL NUMBER",
+        "VERSION");
+
+    // parser.
 
     return 0;
 }
