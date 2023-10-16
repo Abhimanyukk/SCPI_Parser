@@ -5,90 +5,63 @@ bool Compare(char a, char b)
     return (std::tolower(a) == std::tolower(b));
 }
 
-// bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::shared_ptr<Parser>)> &cb)
-// {
-//     int cmdIndex = 0;
-//     bool optionalNode = false;
-//     bool nodeFirstCharacterMatches = false;
-//     std::string commandSyntax = this->syntax;
+bool scpi::Commands::HandleSpecialCharacters(char character, char command, int &cmdIndex, bool &optionalNode)
+{
+    bool result = true;
 
-//     for (char character : commandSyntax)
-//     {
-//         if (std::isalpha(character))
-//         {
-//             if (std::isupper(character))
-//             {
-//                 if (!optionalNode && !Compare(character, cmd[cmdIndex]))
-//                 {
-//                     return false;
-//                 }
-//                 cmdIndex += 1;
-//             }
-//             else
-//             {
-//                 if (!optionalNode && !nodeFirstCharacterMatches)
-//                 {
-//                     return false;
-//                 }
+    switch (character)
+    {
+    case '*':
+    case '?':
+        if (!Compare(character, command))
+        {
+            return false;
+        }
+        cmdIndex += 1;
+        break;
 
-//                 if (Compare(character, cmd[cmdIndex]))
-//                 {
-//                     cmdIndex += 1;
-//                     nodeFirstCharacterMatches = true;
-//                 }
-//                 else
-//                 {
-//                     return false;
-//                 }
-//             }
-//         }
-//         else
-//         {
-//             switch (character)
-//             {
-//             case '*':
-//             case '?':
-//                 if (!Compare(character, cmd[cmdIndex]))
-//                 {
-//                     return false;
-//                 }
-//                 cmdIndex += 1;
-//                 break;
+    case '#':
+        if (std::isdigit(command))
+        {
+            cmdIndex += 1;
+        }
+        break;
 
-//             case '#':
-//                 if (!std::isdigit(cmd[cmdIndex]))
-//                 {
-//                     return false;
-//                 }
-//                 cmdIndex += 1;
-//                 break;
+    case ':':
+        if (!optionalNode)
+        {
+            if (!Compare(character, command))
+            {
+                return false;
+            }
+            cmdIndex += 1;
+        }
+        else
+        {
+            if (Compare(character, command))
+            {
+                cmdIndex += 1;
+            }
+        }
+        break;
 
-//             case ':':
-//                 if (!optionalNode && !Compare(character, cmd[cmdIndex]))
-//                 {
-//                     return false;
-//                 }
-//                 cmdIndex += 1;
-//                 break;
+    case '[':
+        optionalNode = true;
+        break;
 
-//             case '[':
-//                 optionalNode = true;
-//                 break;
+    case ']':
+        optionalNode = false;
+        break;
 
-//             case ']':
-//                 optionalNode = false;
-//                 break;
+    default:
+        result = false;
+        break;
+    }
 
-//             default:
-//                 // Handle other characters if needed
-//                 break;
-//             }
-//         }
-//     }
+    return result;
+}
 
-//     return true;
-// }
-
+#if 1
 bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::shared_ptr<Parser>)> &cb)
 {
     std::string commandSyntax = this->syntax;
@@ -103,7 +76,6 @@ bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::sh
     {
         if (std::isalpha(character))
         {
-            std::cout << character << " is alpha\n";
             if (std::isupper(character))
             {
                 firstLowerMatches = false;
@@ -112,11 +84,8 @@ bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::sh
                 {
                     if (!Compare(character, cmd[cmdIndex]))
                     {
-                        std::cout << character << " is not equal to " << cmd[cmdIndex] << "\n";
-                        std::cout << "Return due to 1" << std::endl;
                         return false;
                     }
-                    std::cout << character << " is equal to " << cmd[cmdIndex] << "\n";
                     cmdIndex += 1;
                 }
                 else
@@ -126,147 +95,61 @@ bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::sh
                         nodeFirstCharMatches = true;
                         cmdIndex += 1;
                     }
-                    else
+                    else if (nodeFirstCharMatches)
                     {
-                        if (nodeFirstCharMatches)
-                        {
-                            std::cout << "Return due to 2" << std::endl;
-                            return false;
-                        }
+                        return false;
                     }
+                }
+            }
+            else if (!optionalNode)
+            {
+                if (!firstLower)
+                {
+                    firstLower = 1;
+
+                    if (Compare(character, cmd[cmdIndex]))
+                    {
+                        cmdIndex += 1;
+                        firstLowerMatches = 1;
+                    }
+                }
+                else if (firstLowerMatches)
+                {
+                    if (!Compare(character, cmd[cmdIndex]))
+                    {
+                        return false;
+                    }
+                    cmdIndex += 1;
+                }
+            }
+            else if (!firstLower)
+            {
+                firstLower = true;
+                if (Compare(character, cmd[cmdIndex]))
+                {
+                    cmdIndex += 1;
+                    firstLowerMatches = 1;
+                }
+                else if (firstLowerMatches)
+                {
+                    return false;
                 }
             }
             else
             {
-                if (!optionalNode)
+                if (firstLowerMatches)
                 {
-                    if (!firstLower)
+                    if (!Compare(character, cmd[cmdIndex]))
                     {
-                        firstLower = 1;
-                        std::cout << character << " is lower\n";
-
-                        if (Compare(character, cmd[cmdIndex]))
-                        {
-                            std::cout << character << " is equal to " << cmd[cmdIndex] << "\n";
-                            cmdIndex += 1;
-                            firstLowerMatches = 1;
-                        }
-                        std::cout << character << " is not equal to " << cmd[cmdIndex] << "\n";
+                        return false;
                     }
-                    else
-                    {
-                        if (firstLowerMatches)
-                        {
-                            if (!Compare(character, cmd[cmdIndex]))
-                            {
-                                std::cout << "Return due to 3" << std::endl;
-                                return false;
-                            }
-                            cmdIndex += 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (!firstLower)
-                    {
-                        firstLower = true;
-                        if (Compare(character, cmd[cmdIndex]))
-                        {
-                            cmdIndex += 1;
-                            firstLowerMatches = 1;
-                        }
-                        else
-                        {
-                            if (firstLowerMatches)
-                            {
-                                std::cout << "Return due to 4" << std::endl;
-                                return false;
-                            }
-                            // cmdIndex += 1;
-                        }
-                    }
-                    else
-                    {
-                        if (firstLowerMatches)
-                        {
-                            if (!Compare(character, cmd[cmdIndex]))
-                            {
-                                return false;
-                            }
-                            cmdIndex += 1;
-                        }
-                    }
+                    cmdIndex += 1;
                 }
             }
         }
-        else
+        else if (!this->HandleSpecialCharacters(character, cmd[cmdIndex], cmdIndex, optionalNode))
         {
-            std::cout << character << " is not alpha\n";
-            if (character == '*')
-            {
-                std::cout << character << " is '*'\n";
-                if (!Compare(character, cmd[cmdIndex]))
-                {
-                    std::cout << character << " is not equal to " << cmd[cmdIndex] << "\n";
-                    std::cout << "Return due to 5" << std::endl;
-                    return false;
-                }
-                std::cout << character << " is equal to " << cmd[cmdIndex] << "\n";
-                cmdIndex += 1;
-            }
-            else if (character == '#')
-            {
-                std::cout << character << " is '#'\n";
-                if (std::isdigit(cmd[cmdIndex]))
-                {
-                    std::cout << cmd[cmdIndex] << " is digit\n";
-                    cmdIndex += 1;
-                }
-            }
-            else if (character == ':')
-            {
-                if (!optionalNode)
-                {
-                    std::cout << character << " is ':'\n";
-                    if (!Compare(character, cmd[cmdIndex]))
-                    {
-                        std::cout << character << " is not equal to " << cmd[cmdIndex] << "\n";
-                        std::cout << "Return due to 6" << std::endl;
-                        return false;
-                    }
-                    std::cout << character << " is equal to " << cmd[cmdIndex] << "\n";
-                    cmdIndex += 1;
-                }
-                else
-                {
-                    if (Compare(character, cmd[cmdIndex]))
-                    {
-                        cmdIndex += 1;
-                    }
-                }
-            }
-            else if (character == '?')
-            {
-                std::cout << character << " is '?'\n";
-                if (!Compare(character, cmd[cmdIndex]))
-                {
-                    std::cout << character << " is not equal to " << cmd[cmdIndex] << "\n";
-                    std::cout << "Return due to 7" << std::endl;
-                    return false;
-                }
-                std::cout << character << " is equal to " << cmd[cmdIndex] << "\n";
-                cmdIndex += 1;
-            }
-
-            else if (character == '[')
-            {
-                optionalNode = true;
-            }
-            else if (character == ']')
-            {
-                optionalNode = false;
-            }
+            return false;
         }
     }
 
@@ -274,3 +157,5 @@ bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::sh
 
     return true;
 }
+
+#endif

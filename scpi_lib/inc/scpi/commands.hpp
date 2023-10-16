@@ -39,11 +39,14 @@ namespace scpi
     private:
         std::string syntax;
         std::function<result_t(std::shared_ptr<Parser>)> callback;
+        bool HandleSpecialCharacters(char character, char command, int &cmdIndex, bool &optionalNode);
 
     public:
         Commands(std::string cmds,
                  std::function<result_t(std::shared_ptr<Parser>)> cb) : syntax(cmds),
-                                                                        callback(cb) {}
+                                                                        callback(cb)
+        {
+        }
         bool CheckSyntax(std::string cmd, std::function<result_t(std::shared_ptr<Parser>)> &cb);
     };
 }

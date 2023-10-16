@@ -38,7 +38,15 @@ int main()
         "VERSION");
 
     // parser.Input("*idn?");
-    parser.Input("syst:pressure?");
+    if (parser.Input("syst:pressure?") &&
+        parser.Input("syst:pres?") &&
+        !parser.Input("syste:pres?") &&
+        !parser.Input("syst:press?"))
+    {
+        std::cout << "TEST ERR\n";
+        return -1;
+    }
+    std::cout << "TEST OK\n";
 
     return 0;
 }
