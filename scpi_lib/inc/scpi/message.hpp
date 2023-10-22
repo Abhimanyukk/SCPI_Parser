@@ -50,7 +50,7 @@ namespace scpi
         public:
             Message(const std::string &msg) : inputMsg(msg) {}
             bool ProcessRawMessage(std::vector<Pattern> &patternList);
-            bool ProcessIndividualMessage(scpi::msg::Pattern individualMessage, const std::vector<scpi::Commands> &commandList);
+            bool ProcessIndividualMessage(scpi::msg::Pattern individualMessage, std::vector<scpi::Commands> &commandList, Commands &commandFound);
         };
     }
 }

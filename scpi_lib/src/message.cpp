@@ -75,19 +75,18 @@ bool scpi::msg::Message::ProcessRawMessage(std::vector<Pattern> &patternList)
     }
 }
 
-bool scpi::msg::Message::ProcessIndividualMessage(scpi::msg::Pattern individualMessage, const std::vector<scpi::Commands> &commandList)
+bool scpi::msg::Message::ProcessIndividualMessage(scpi::msg::Pattern individualMessage, std::vector<scpi::Commands> &commandList, scpi::Commands& commandFound)
 {
+    int i = 0;
     for (scpi::Commands command : commandList)
     {
         std::function<result_t(std::shared_ptr<Parser>)> cb;
         if (command.CheckSyntax(individualMessage.GetHeader(), cb))
         {
-            std::cout << "YYYYYYYYYY Got a match" << std::endl;
-            break;
+            commandFound = commandList[i];
+            return true;
         }
-        else{
-            std::cout << "XXXXXX Not a match" << std::endl;
-        }
+        i++;
     }
     return false;
 }

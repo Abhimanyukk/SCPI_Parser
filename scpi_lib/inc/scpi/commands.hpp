@@ -38,15 +38,15 @@ namespace scpi
     {
     private:
         std::string syntax;
-        std::function<result_t(std::shared_ptr<Parser>)> callback;
+        std::function<result_t(Parser *)> callback;
         bool HandleSpecialCharacters(char character, char command, int &cmdIndex, bool &optionalNode);
 
     public:
         Commands(std::string cmds,
-                 std::function<result_t(std::shared_ptr<Parser>)> cb) : syntax(cmds),
-                                                                        callback(cb)
-        {
-        }
+                 std::function<result_t(Parser *)> cb) : syntax(cmds),
+                                                         callback(cb) {}
+        Commands() {}
         bool CheckSyntax(std::string cmd, std::function<result_t(std::shared_ptr<Parser>)> &cb);
+        void CallFunction(Parser *parser);
     };
 }

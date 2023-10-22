@@ -61,7 +61,6 @@ bool scpi::Commands::HandleSpecialCharacters(char character, char command, int &
     return result;
 }
 
-#if 1
 bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::shared_ptr<Parser>)> &cb)
 {
     std::string commandSyntax = this->syntax;
@@ -153,9 +152,10 @@ bool scpi::Commands::CheckSyntax(std::string cmd, std::function<result_t(std::sh
         }
     }
 
-    std::cout << "Return true\n";
-
     return true;
 }
 
-#endif
+void scpi::Commands::CallFunction(Parser *parser)
+{
+    this->callback(parser);
+}

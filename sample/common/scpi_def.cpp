@@ -1,6 +1,6 @@
 #include "scpi_def.hpp"
 
-static scpi::result_t cbFunction(std::shared_ptr<scpi::Parser> parser)
+static scpi::result_t cbFunction(scpi::Parser * parser)
 {
     std::cout << "Command callback" << std::endl;
     return scpi::SCPI_RES_OK;
