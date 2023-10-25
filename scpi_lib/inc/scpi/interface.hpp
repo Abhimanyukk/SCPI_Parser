@@ -8,22 +8,14 @@ namespace scpi
 {
     class Parser;
 
-    class Interface
+    class InterfaceEvents
     {
-    private:
-        std::function<int(std::shared_ptr<Parser>, int16_t error)>
-            error_callback;
-        std::function<result_t(std::shared_ptr<Parser>,
-                               scpi::ctrl_name_t, uint16_t)>
-            control_callback;
+    protected:
+        Parser &parser;
 
     public:
-        Interface(
-            std::function<int(std::shared_ptr<Parser>, int16_t error)>
-                err_cb,
-            std::function<result_t(std::shared_ptr<Parser>,
-                                   scpi::ctrl_name_t, uint16_t)>
-                ctrl_cb) : error_callback(err_cb),
-                           control_callback(ctrl_cb) {}
+        InterfaceEvents(Parser &_parser) : parser(_parser) {}
+        virtual void onError(Parser *_parser) {}
+        virtual void onWrite(Parser *_parser) {}
     };
 }

@@ -4,11 +4,10 @@
 
 namespace scpi_def
 {
-    extern std::vector<scpi::Commands> scpi_command_list;
-
-    class ScpiDef : public scpi::Parser
+    class ScpiDef : public scpi::ieee::IEEE
     {
     public:
-        int SCPI_Error(int16_t error);
+        static std::vector<scpi::Commands> scpi_command_list;
+        static scpi::result_t cbFunction(scpi::Parser *parser);
     };
 }

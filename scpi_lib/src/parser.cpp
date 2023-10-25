@@ -33,3 +33,8 @@ bool scpi::Parser::Input(const std::string &cmd)
 
     return true;
 }
+
+void scpi::Parser::RegisterInterface(InterfaceEvents *handler)
+{
+    this->interfaceHandler = handler;
+}

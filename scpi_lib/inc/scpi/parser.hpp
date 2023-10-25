@@ -13,26 +13,38 @@ namespace scpi
     {
     private:
         std::vector<Commands> commands;
-        Interface interface;
+        // Interface interface;
         std::list<unit::Units> unit_def;
         std::vector<std::string> idn_list;
+        InterfaceEvents *interfaceHandler;
 
     public:
-        Parser(std::vector<Commands> cmds,
-               scpi::Interface _interface,
+        Parser(std::vector<Commands> _cmds,
+               //    scpi::Interface _interface,
                std::list<unit::Units> _unit_def,
-               const std::string &idn1,
-               const std::string &idn2,
-               const std::string &idn3,
-               const std::string &idn4) : commands(cmds),
-                                          interface(_interface),
-                                          unit_def(_unit_def),
-                                          idn_list({idn1, idn2, idn3, idn4})
+               const std::string &_idn1,
+               const std::string &_idn2,
+               const std::string &_idn3,
+               const std::string &_idn4) : commands(_cmds),
+                                           //   interface(_interface),
+                                           unit_def(_unit_def),
+                                           idn_list({_idn1, _idn2, _idn3, _idn4})
         {
-            std::cout << idn_list[2] << std::endl;
         }
 
         bool Input(const std::string &cmd);
+        void RegisterInterface(InterfaceEvents *handler);
+
+        bool ErrorHandler()
+        {
+            interfaceHandler->onError(this);
+            return true;
+        }
+
+        void PrintIdn(int k)
+        {
+            std::cout << idn_list[k] << std::endl;
+        }
 
         ~Parser();
     };
